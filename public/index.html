@@ -1,0 +1,1337 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Desire Room | 18+ LDR Couples Truth or Dare</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Font Inter & Outfit -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800;900&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap"
+        rel="stylesheet">
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            dark: '#05010B',
+                            card: 'rgba(18, 7, 33, 0.85)',
+                            hotPink: '#FF007F',
+                            neonMagenta: '#E0125C',
+                            vividPurple: '#9333EA',
+                            crimson: '#FF1E43'
+                        }
+                    },
+                    fontFamily: {
+                        outfit: ['Outfit', 'sans-serif'],
+                        sans: ['Plus Jakarta Sans', 'sans-serif']
+                    },
+                    boxShadow: {
+                        glowHotPink: '0 0 30px rgba(255, 0, 127, 0.6)',
+                        glowPurple: '0 0 30px rgba(147, 51, 234, 0.6)',
+                        glowCyan: '0 0 25px rgba(6, 182, 212, 0.5)',
+                        glowRed: '0 0 30px rgba(255, 30, 67, 0.7)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #05010B;
+            background-image:
+                radial-gradient(circle at 10% 10%, rgba(255, 0, 127, 0.25) 0%, transparent 45%),
+                radial-gradient(circle at 90% 90%, rgba(147, 51, 234, 0.25) 0%, transparent 45%),
+                radial-gradient(circle at 50% 50%, rgba(255, 30, 67, 0.15) 0%, rgba(5, 1, 11, 1) 90%);
+            background-attachment: fixed;
+            color: #F8FAFC;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            touch-action: manipulation;
+        }
+
+        .neon-border-hotpink {
+            border: 1.5px solid rgba(255, 0, 127, 0.5);
+            box-shadow: inset 0 0 20px rgba(255, 0, 127, 0.2), 0 0 25px rgba(255, 0, 127, 0.35);
+        }
+
+        .neon-border-purple {
+            border: 1.5px solid rgba(147, 51, 234, 0.5);
+            box-shadow: inset 0 0 20px rgba(147, 51, 234, 0.2), 0 0 25px rgba(147, 51, 234, 0.35);
+        }
+
+        .glass-panel-spicy {
+            background: rgba(18, 7, 33, 0.82);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .pulse-hot {
+            animation: pulse-hot-anim 1.5s infinite;
+        }
+
+        @keyframes pulse-hot-anim {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(255, 0, 127, 0.8);
+            }
+
+            70% {
+                transform: scale(1.05);
+                box-shadow: 0 0 0 14px rgba(255, 0, 127, 0);
+            }
+
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(255, 0, 127, 0);
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(5, 1, 11, 0.8);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 0, 127, 0.5);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 0, 127, 0.8);
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col justify-between overflow-x-hidden antialiased select-none">
+
+    <!-- Header -->
+    <header
+        class="w-full glass-panel-spicy sticky top-0 z-40 border-b border-pink-500/30 px-4 py-3 flex items-center justify-between shadow-2xl">
+        <div class="flex items-center space-x-2">
+            <div
+                class="w-10 h-10 rounded-full bg-gradient-to-tr from-pink-600 via-rose-600 to-purple-600 flex items-center justify-center shadow-glowHotPink animate-pulse">
+                <i class="fa-solid fa-fire-flame-curved text-white text-xl"></i>
+            </div>
+            <div>
+                <h1
+                    class="font-outfit font-black text-xl sm:text-2xl tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-rose-400 to-purple-400">
+                    DESIRE ROOM</h1>
+                <p class="text-[9px] text-pink-400/90 tracking-widest uppercase font-bold">18+ UNFILTERED ADULT LDR
+                    SANCTUARY</p>
+            </div>
+        </div>
+
+        <div id="room-badge"
+            class="hidden items-center space-x-2 bg-purple-950/80 border border-pink-500/40 px-3 py-1.5 rounded-full shadow-glowPurple">
+            <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
+            <span class="text-xs font-mono font-extrabold text-pink-200">ROOM: <span id="header-room-code"
+                    class="text-pink-400">------</span></span>
+            <button onclick="copyRoomCode()" class="text-pink-300 hover:text-white text-xs ml-1 transition"><i
+                    class="fa-regular fa-copy"></i></button>
+            <button onclick="openRulesModal()"
+                class="text-xs bg-purple-900/80 hover:bg-purple-800 text-pink-300 border border-pink-500/40 px-3 py-1.5 rounded-full font-bold shadow-glowPurple transition flex items-center space-x-1.5">
+                <i class="fa-solid fa-scroll text-pink-400"></i>
+                <span>RULES</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-md w-full mx-auto p-4 flex flex-col justify-center">
+
+        <!-- 1. AGE VERIFICATION SCREEN -->
+        <section id="screen-age"
+            class="glass-panel-spicy neon-border-hotpink rounded-3xl p-6 shadow-2xl my-auto text-center space-y-6">
+            <div class="space-y-3">
+                <div
+                    class="inline-block p-4 rounded-full bg-pink-500/20 text-pink-500 border border-pink-500/40 mb-2 shadow-glowHotPink">
+                    <i class="fa-solid fa-triangle-exclamation text-5xl animate-bounce"></i>
+                </div>
+                <h2 class="font-outfit text-2xl font-extrabold text-white tracking-wide">AGE VERIFICATION</h2>
+                <p class="text-xs text-gray-300 leading-relaxed max-w-xs mx-auto">This area contains explicit adult
+                    content meant for consenting adults only. Are you 18 years of age or older?</p>
+            </div>
+
+            <div class="space-y-3 pt-2">
+                <button onclick="confirmAge(true)"
+                    class="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-pink-600 via-rose-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 text-white font-black font-outfit tracking-widest shadow-glowHotPink hover:shadow-2xl transition-all duration-300 transform active:scale-95 flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-check text-lg"></i>
+                    <span>YES, I AM 18+</span>
+                </button>
+
+                <button onclick="confirmAge(false)"
+                    class="w-full py-3.5 px-6 rounded-2xl bg-purple-950/80 border border-purple-500/40 hover:bg-purple-900/80 text-purple-300 font-bold font-outfit tracking-wider transition-all transform active:scale-95 flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                    <span>NO, I AM UNDER 18</span>
+                </button>
+            </div>
+            <p id="age-error" class="text-xs text-rose-400 min-h-[1rem] font-bold"></p>
+        </section>
+
+        <!-- 2. GENDER SELECTION SCREEN -->
+        <section id="screen-gender"
+            class="hidden glass-panel-spicy neon-border-purple rounded-3xl p-6 shadow-2xl my-auto text-center space-y-6">
+            <div class="space-y-2">
+                <div
+                    class="inline-block p-4 rounded-full bg-purple-500/20 text-purple-400 border border-purple-500/40 mb-2 shadow-glowPurple">
+                    <i class="fa-solid fa-venus-mars text-5xl animate-pulse"></i>
+                </div>
+                <h2 class="font-outfit text-2xl font-extrabold text-white tracking-wide">CHOOSE YOUR GENDER</h2>
+                <p class="text-xs text-gray-300 leading-relaxed max-w-xs mx-auto">Select your gender for strict 1 Boy +
+                    1 Girl pairing verification.</p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 pt-2">
+                <button onclick="selectGender('boy')"
+                    class="py-6 px-4 rounded-2xl bg-purple-950/80 border border-cyan-500/50 hover:bg-cyan-950/60 text-cyan-300 font-black font-outfit tracking-wider shadow-glowCyan transition-all transform active:scale-95 flex flex-col items-center justify-center space-y-2">
+                    <i class="fa-solid fa-mars text-4xl text-cyan-400"></i>
+                    <span>BOY ♂</span>
+                </button>
+
+                <button onclick="selectGender('girl')"
+                    class="py-6 px-4 rounded-2xl bg-purple-950/80 border border-pink-500/50 hover:bg-pink-950/60 text-pink-300 font-black font-outfit tracking-wider shadow-glowHotPink transition-all transform active:scale-95 flex flex-col items-center justify-center space-y-2">
+                    <i class="fa-solid fa-venus text-4xl text-pink-400"></i>
+                    <span>GIRL ♀</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- LOBBY SCREEN -->
+        <section id="screen-lobby"
+            class="hidden glass-panel-spicy neon-border-hotpink rounded-3xl p-6 shadow-2xl my-auto text-center space-y-6">
+            <div class="space-y-2">
+                <div
+                    class="inline-block p-4 rounded-full bg-pink-500/20 text-pink-500 border border-pink-500/40 mb-2 shadow-glowHotPink">
+                    <i class="fa-solid fa-heart-pulse text-5xl animate-bounce"></i>
+                </div>
+                <h2 class="font-outfit text-2xl font-extrabold text-white tracking-wide">PRIVATE LDR DESIRE ZONE</h2>
+                <p class="text-xs text-gray-300 leading-relaxed max-w-xs mx-auto">Explicit 18+ Truth or Dare for
+                    couples. Connect secretly, spin, share photo/voice proofs and execute wild desires.</p>
+            </div>
+
+            <div class="space-y-4 pt-2">
+                <button onclick="createRoom()"
+                    class="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-pink-600 via-rose-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 text-white font-black font-outfit tracking-widest shadow-glowHotPink hover:shadow-2xl transition-all duration-300 transform active:scale-95 flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-fire text-lg"></i>
+                    <span>CREATE PRIVATE ROOM</span>
+                </button>
+
+                <div class="flex items-center space-x-3 text-xs text-gray-400 uppercase tracking-widest my-2">
+                    <div class="flex-1 h-px bg-pink-900/50"></div>
+                    <span>OR JOIN PARTNER</span>
+                    <div class="flex-1 h-px bg-pink-900/50"></div>
+                </div>
+
+                <div class="space-y-2">
+                    <input type="text" id="input-room-code" maxlength="6" placeholder="ENTER 6-DIGIT CODE"
+                        class="w-full bg-purple-950/60 border border-pink-500/40 rounded-2xl px-4 py-3.5 text-center font-mono text-xl font-black tracking-widest text-pink-300 placeholder-gray-500 focus:outline-none focus:border-pink-500 transition uppercase">
+                    <button onclick="joinRoom()"
+                        class="w-full py-3.5 px-6 rounded-2xl bg-purple-900/70 border border-purple-500/50 hover:bg-purple-800/80 text-purple-200 font-bold font-outfit tracking-wider shadow-glowPurple hover:text-white transition-all transform active:scale-95 flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-right-to-bracket"></i>
+                        <span>JOIN PARTNER'S ROOM</span>
+                    </button>
+                </div>
+            </div>
+
+            <p id="lobby-error" class="text-xs text-rose-400 min-h-[1rem] font-bold"></p>
+        </section>
+
+        <!-- WAITING SCREEN -->
+        <section id="screen-waiting"
+            class="hidden glass-panel-spicy neon-border-purple rounded-3xl p-6 text-center space-y-6 my-auto">
+            <div class="space-y-3">
+                <div
+                    class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-purple-500/20 border border-purple-500/40 text-purple-400 shadow-glowPurple">
+                    <i class="fa-solid fa-wifi text-3xl animate-pulse"></i>
+                </div>
+                <h2 class="font-outfit text-2xl font-black text-purple-200">WAITING FOR YOUR PARTNER</h2>
+                <p class="text-xs text-gray-300">Share this secret invite code with your partner to unlock the desire
+                    room.</p>
+            </div>
+
+            <div
+                class="bg-purple-950/90 border border-pink-500/40 rounded-2xl p-4 flex flex-col items-center justify-center space-y-2 shadow-glowHotPink">
+                <span class="text-[10px] uppercase font-bold tracking-widest text-pink-300">Secret Access Code</span>
+                <span id="waiting-room-code"
+                    class="font-mono text-4xl font-black text-pink-400 tracking-widest">------</span>
+                <button onclick="copyRoomCode()"
+                    class="mt-2 text-xs bg-pink-600/30 hover:bg-pink-600/50 text-pink-200 border border-pink-500/50 px-4 py-2 rounded-full transition flex items-center space-x-2 font-semibold">
+                    <i class="fa-regular fa-copy"></i>
+                    <span>Copy Invitation Code</span>
+                </button>
+            </div>
+
+            <div class="pt-2 flex items-center justify-center space-x-2 text-xs text-pink-300 font-semibold">
+                <i class="fa-solid fa-circle-notch fa-spin text-pink-400"></i>
+                <span>Listening for partner connection...</span>
+            </div>
+        </section>
+
+        <!-- GAMEPLAY & CHAT CONTAINER SCREEN -->
+        <section id="screen-game" class="hidden flex-1 flex flex-col space-y-4 my-2">
+
+            <!-- Turn Banner -->
+            <div
+                class="glass-panel-spicy rounded-2xl p-3 border border-pink-500/30 flex items-center justify-between shadow-2xl">
+                <div class="flex items-center space-x-3">
+                    <div id="turn-avatar"
+                        class="w-10 h-10 rounded-full bg-gradient-to-r from-pink-600 to-purple-600 flex items-center justify-center text-white font-black text-sm shadow-glowHotPink">
+                        P1
+                    </div>
+                    <div>
+                        <div id="turn-headline" class="text-xs font-black text-pink-300 tracking-wider uppercase">YOUR
+                            TURN</div>
+                        <div id="turn-subtext" class="text-[10px] text-gray-300 font-semibold">Spin the desire wheel
+                        </div>
+                    </div>
+                </div>
+                <!-- Points Display & Intensity Selector -->
+                <div class="flex items-center space-x-2">
+                    <div
+                        class="text-[11px] font-black text-pink-300 bg-purple-950/90 border border-pink-500/40 px-2.5 py-1.5 rounded-xl shadow-glowPurple">
+                        Points: <span id="my-points-display" class="text-white">100</span>
+                    </div>
+                    <select id="level-select" onchange="changeLevel(this.value)"
+                        class="bg-purple-950/90 border border-pink-500/50 text-pink-300 text-xs font-bold rounded-xl px-2 py-2 focus:outline-none cursor-pointer shadow-glowHotPink max-w-[140px] sm:max-w-none">
+                        <option value="1">💕 Level 1: Flirty</option>
+                        <option value="2">🔥 Level 2: Steamy</option>
+                        <option value="3" selected>🌶️ Level 3: 18+ Wild & Dirty</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Canvas Wheel Card -->
+            <div
+                class="glass-panel-spicy neon-border-hotpink rounded-3xl p-4 flex flex-col items-center justify-center relative overflow-hidden shadow-2xl">
+
+                <!-- Wheel Pointer -->
+                <div
+                    class="absolute top-2 z-20 text-pink-500 drop-shadow-[0_0_12px_rgba(255,0,127,1)] text-3xl sm:text-4xl">
+                    <i class="fa-solid fa-caret-down"></i>
+                </div>
+
+                <!-- Canvas -->
+                <div class="relative w-52 h-52 sm:w-64 sm:h-64 my-2 flex items-center justify-center">
+                    <canvas id="wheel-canvas" width="256" height="256"
+                        class="w-full h-full rounded-full transition-transform duration-100"></canvas>
+                    <div
+                        class="absolute w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-purple-950 border-2 border-pink-500 flex items-center justify-center text-pink-400 shadow-glowHotPink font-black text-xs sm:text-sm">
+                        18+
+                    </div>
+                </div>
+
+                <!-- Action Button -->
+                <button id="spin-btn" onclick="spinWheel()"
+                    class="mt-2 w-full py-3.5 rounded-2xl bg-gradient-to-r from-pink-600 via-rose-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 disabled:opacity-40 disabled:cursor-not-allowed text-white font-black font-outfit text-xs sm:text-sm tracking-widest shadow-glowHotPink transition-all duration-200 transform active:scale-95 flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-compact-disc fa-spin-pulse text-lg"></i>
+                    <span>SPIN THE DESIRE WHEEL</span>
+                </button>
+            </div>
+
+            <!-- Private Chat Box -->
+            <div class="glass-panel-spicy neon-border-purple rounded-3xl p-3 flex flex-col space-y-2">
+                <!-- Chat Header -->
+                <div class="flex items-center justify-between pb-2 border-b border-purple-500/30 px-1">
+                    <div class="flex items-center space-x-2">
+                        <i class="fa-solid fa-lock text-pink-400 text-xs"></i>
+                        <span class="text-[11px] sm:text-xs font-black text-purple-200 tracking-wider">END-TO-END
+                            PRIVATE LDR CHAT</span>
+                    </div>
+                    <span
+                        class="text-[9px] sm:text-[10px] bg-purple-900/80 text-pink-300 px-2 py-0.5 rounded-full border border-pink-500/30 font-bold">Encrypted</span>
+                </div>
+
+                <!-- Messages Feed -->
+                <div id="chat-feed"
+                    class="max-h-[250px] min-h-[180px] overflow-y-auto space-y-3 px-1 pr-2 py-1 text-xs">
+                    <div class="text-center my-1">
+                        <span
+                            class="text-[10px] bg-purple-950/90 text-pink-300 px-3 py-1 rounded-full border border-pink-500/30 font-semibold">
+                            🔥 Welcome to Desire Room! Connect, speak, spin & share secrets.
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Quick Reaction Bar -->
+                <div
+                    class="flex items-center justify-around py-1 my-1 border-t border-purple-500/20 bg-purple-950/50 rounded-xl px-2">
+                    <button onclick="sendQuickEmoji('🌶️')" class="hover:scale-125 transition transform">🌶️</button>
+                    <button onclick="sendQuickEmoji('🔥')" class="hover:scale-125 transition transform">🔥</button>
+                    <button onclick="sendQuickEmoji('💦')" class="hover:scale-125 transition transform">💦</button>
+                    <button onclick="sendQuickEmoji('💋')" class="hover:scale-125 transition transform">💋</button>
+                    <button onclick="sendQuickEmoji('😈')" class="hover:scale-125 transition transform">😈</button>
+                </div>
+
+                <!-- Image Attachment Preview Thumbnail -->
+                <div id="image-preview-container"
+                    class="hidden relative mb-2 p-1 bg-purple-900/60 rounded-xl border border-pink-500/50 max-w-[100px]">
+                    <img id="image-preview-element" src="" class="w-full h-16 object-cover rounded-lg">
+                    <button onclick="cancelImagePreview()"
+                        class="absolute -top-2 -right-2 bg-rose-600 text-white w-5 h-5 rounded-full flex items-center justify-center text-[10px] shadow-md">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <!-- Input Controls Box -->
+                <div class="flex items-center space-x-1.5 sm:space-x-2 pt-1">
+                    <label
+                        class="cursor-pointer p-2 sm:p-2.5 rounded-xl bg-purple-900/70 hover:bg-purple-800/90 border border-purple-500/40 text-pink-400 hover:text-pink-300 transition flex items-center justify-center shadow-glowPurple">
+                        <i class="fa-solid fa-camera"></i>
+                        <input type="file" id="image-input" accept="image/*" class="hidden"
+                            onchange="handleImageSelect(event, false)">
+                    </label>
+
+                    <button id="mic-btn" onclick="toggleVoiceRecording(false)"
+                        class="p-2 sm:p-2.5 rounded-xl bg-purple-900/70 hover:bg-purple-800/90 border border-purple-500/40 text-pink-400 hover:text-pink-300 transition flex items-center justify-center shadow-glowPurple">
+                        <i id="mic-icon" class="fa-solid fa-microphone"></i>
+                    </button>
+
+                    <input type="text" id="chat-text-input" placeholder="Type a sweet or dirty secret..."
+                        onkeydown="if(event.key==='Enter') sendChatMessage()"
+                        class="flex-1 min-w-0 bg-purple-950/90 border border-purple-500/40 rounded-xl px-2.5 py-2 text-xs text-purple-100 placeholder-gray-500 focus:outline-none focus:border-pink-500 transition">
+
+                    <button onclick="sendChatMessage()"
+                        class="p-2 sm:p-2.5 rounded-xl bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-500 hover:to-rose-500 text-white font-bold transition shadow-glowHotPink flex items-center justify-center">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- PROMPT MODAL WITH PROOF & PARTNER VIEW OPTIONS -->
+    <div id="prompt-modal"
+        class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
+        <div
+            class="glass-panel-spicy neon-border-hotpink rounded-3xl p-5 sm:p-6 max-w-sm w-full text-center space-y-4 sm:space-y-5 transform transition-all duration-300 scale-95 shadow-glowHotPink relative my-auto">
+
+            <button onclick="closePromptModalSelf()"
+                class="absolute top-3 right-3 w-8 h-8 rounded-full bg-pink-600/30 hover:bg-pink-600 text-white border border-pink-500/50 flex items-center justify-center text-sm font-bold transition">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div id="prompt-badge"
+                class="inline-block px-4 py-1.5 rounded-full text-xs font-black tracking-widest uppercase bg-pink-600 text-white shadow-glowHotPink">
+                TRUTH
+            </div>
+
+            <div class="space-y-2">
+                <h3 class="text-[10px] uppercase font-bold text-gray-400 tracking-widest">SECRET PROMPT</h3>
+                <p id="prompt-content" class="text-sm sm:text-base font-bold text-white leading-relaxed font-outfit">
+                    Question appears here...
+                </p>
+            </div>
+
+            <!-- DYNAMIC PROOF / MOTIVATE ACTION CONTAINER -->
+            <div id="prompt-actions-container" class="space-y-3 pt-1">
+                <!-- Injected via JavaScript dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- DEDICATED OVERLAY CHAT MODAL WITH IN-APP MEDIA UPLOADER -->
+    <div id="modal-chat-overlay"
+        class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 hidden flex items-center justify-center p-3">
+        <div
+            class="glass-panel-spicy neon-border-hotpink rounded-3xl p-4 max-w-sm w-full h-[80vh] sm:h-[85vh] flex flex-col relative shadow-glowHotPink">
+            <div class="flex items-center justify-between border-b border-pink-500/30 pb-3 mb-2">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-comments text-pink-400 text-base"></i>
+                    <h4 class="font-outfit font-black text-sm text-pink-200 tracking-wider">PROMPT ANSWER & PROOFS</h4>
+                </div>
+                <button onclick="closeChatModalOverlay()"
+                    class="w-8 h-8 rounded-full bg-pink-600/30 hover:bg-pink-600 text-white border border-pink-500/50 flex items-center justify-center text-sm font-bold transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div id="modal-chat-feed" class="flex-1 overflow-y-auto space-y-3 px-1 py-2 text-xs">
+                <div class="text-center my-1">
+                    <span
+                        class="text-[10px] bg-purple-950/90 text-pink-300 px-3 py-1 rounded-full border border-pink-500/30 font-semibold">
+                        💬 Upload photo, voice proof or chat directly here.
+                    </span>
+                </div>
+            </div>
+
+            <!-- Image Preview in Overlay Modal -->
+            <div id="modal-image-preview-container"
+                class="hidden relative mb-2 p-1 bg-purple-900/60 rounded-xl border border-pink-500/50 max-w-[100px]">
+                <img id="modal-image-preview-element" src="" class="w-full h-16 object-cover rounded-lg">
+                <button onclick="cancelModalImagePreview()"
+                    class="absolute -top-2 -right-2 bg-rose-600 text-white w-5 h-5 rounded-full flex items-center justify-center text-[10px] shadow-md">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="pt-2 border-t border-purple-500/30 space-y-2">
+                <div class="flex items-center space-x-1.5 sm:space-x-2">
+                    <label
+                        class="cursor-pointer p-2 sm:p-2.5 rounded-xl bg-purple-900/70 hover:bg-purple-800/90 border border-purple-500/40 text-pink-400 hover:text-pink-300 transition flex items-center justify-center shadow-glowPurple">
+                        <i class="fa-solid fa-camera"></i>
+                        <input type="file" id="modal-image-input" accept="image/*" class="hidden"
+                            onchange="handleImageSelect(event, true)">
+                    </label>
+
+                    <button id="modal-mic-btn" onclick="toggleVoiceRecording(true)"
+                        class="p-2 sm:p-2.5 rounded-xl bg-purple-900/70 hover:bg-purple-800/90 border border-purple-500/40 text-pink-400 hover:text-pink-300 transition flex items-center justify-center shadow-glowPurple">
+                        <i id="modal-mic-icon" class="fa-solid fa-microphone"></i>
+                    </button>
+
+                    <input type="text" id="modal-chat-input" placeholder="Write your secret answer..."
+                        onkeydown="if(event.key==='Enter') sendModalChatMessage()"
+                        class="flex-1 min-w-0 bg-purple-950/90 border border-pink-500/40 rounded-xl px-3 py-2 text-xs text-purple-100 placeholder-gray-500 focus:outline-none focus:border-pink-500 transition">
+
+                    <button onclick="sendModalChatMessage()"
+                        class="p-2.5 rounded-xl bg-pink-600 hover:bg-pink-500 text-white font-bold transition shadow-glowHotPink flex items-center justify-center">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- IMAGE VIEW MODAL -->
+    <div id="image-modal" onclick="closeImageModal()"
+        class="fixed inset-0 bg-black/95 backdrop-blur-md z-50 hidden flex items-center justify-center p-4 cursor-pointer">
+        <div class="relative max-w-lg w-full max-h-[85vh] flex items-center justify-center">
+            <img id="modal-image-display" src=""
+                class="max-w-full max-h-[85vh] rounded-2xl border-2 border-pink-500/60 shadow-glowHotPink object-contain">
+            <button onclick="closeImageModal()"
+                class="absolute -top-3 -right-3 text-white bg-pink-600 w-9 h-9 rounded-full flex items-center justify-center font-black shadow-glowHotPink">
+                <i class="fa-solid fa-xmark text-base"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- CUSTOM SARCASTIC NEON ALERT MODAL -->
+    <div id="alert-modal"
+        class="hidden fixed inset-0 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 z-50">
+        <div
+            class="glass-panel-spicy neon-border-hotpink max-w-sm w-full p-6 rounded-3xl text-center space-y-4 shadow-glowHotPink">
+            <div id="alert-icon" class="text-4xl">💅</div>
+            <h3 id="alert-title" class="font-outfit text-xl font-black text-pink-400">Oops Queens!</h3>
+            <p id="alert-message" class="text-xs text-purple-200 leading-relaxed"></p>
+            <button onclick="closeAlertModal()"
+                class="w-full py-3 bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 font-bold rounded-xl text-white text-xs shadow-glowHotPink transition">
+                UNDERSTOOD
+            </button>
+        </div>
+    </div>
+
+    <!-- RULES & INSTRUCTIONS MODAL -->
+    <div id="rules-modal"
+        class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div
+            class="glass-panel-spicy neon-border-purple rounded-3xl p-6 max-w-sm w-full space-y-4 relative shadow-glowPurple">
+            <div class="flex items-center justify-between border-b border-pink-500/30 pb-3">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-scroll text-pink-400 text-lg"></i>
+                    <h3 class="font-outfit font-black text-pink-200 text-base tracking-wider">GAME RULES & SAFETY</h3>
+                </div>
+                <button onclick="closeRulesModal()"
+                    class="w-7 h-7 rounded-full bg-pink-600/30 hover:bg-pink-600 text-white border border-pink-500/50 flex items-center justify-center text-xs font-bold transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="text-xs text-gray-300 space-y-2.5 leading-relaxed max-h-[60vh] overflow-y-auto pr-1">
+                <p>1. 🎲 <b>Spin & Turn:</b> Take turns spinning the desire wheel to get Truth or Dare prompts.</p>
+                <p>2. 😈 <b>Penalty System:</b> Choosing 'Take Penalty' or 'Skip Prompt' deducts 10 points automatically from your total score.</p>
+                <p>3. 👫 <b>1 Boy + 1 Girl Only:</b> Strict gender pairing enforcement for authentic LDR chemistry.</p>
+                <p>4. 🚫 <b>2-Player Limit:</b> Strictly capped at 2 partners per private session.</p>
+                <p>5. 🔒 <b>End-to-End Private:</b> Ephemeral sanctuary reserved exclusively for you & your partner.</p>
+                <p>6. 💬 <b>Auto-Clean Privacy:</b> Photos, voice notes, and chat logs are deleted automatically upon exit.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const socket = io();
+
+        // GENDER-SPECIFIC TRUTHS & DARES FOR ALL LEVELS
+        const QUESTION_BANK = {
+            1: {
+                truth: {
+                    boy: [
+                        "What is the one thing you miss the most about her in LDR?",
+                        "What was your exact first impression of her when you first met?",
+                        "Which outfit or look of hers drives you crazy?",
+                        "What is your favorite memory with her on a video call?",
+                        "What is one cute habit of hers that you secretly adore?"
+                    ],
+                    girl: [
+                        "What is the one thing you miss the most about him in LDR?",
+                        "What was your exact first impression of him when you first met?",
+                        "Which outfit or look of his drives you crazy?",
+                        "What is your favorite memory with him on a video call?",
+                        "What is one cute habit of his that you secretly adore?"
+                    ]
+                },
+                dare: {
+                    boy: [
+                        "Send her a 30-second seductive voice note right now in your deep voice.",
+                        "Maintain continuous romantic eye contact with the camera for 45 seconds.",
+                        "Flex your arms or show your chest pose for 5 seconds on camera.",
+                        "Send your current handsome selfie in the chat right now.",
+                        "Write 'I Love You My Princess' on a piece of paper and show it."
+                    ],
+                    girl: [
+                        "Send him a 30-second sweet and seductive voice note right now.",
+                        "Maintain continuous romantic eye contact with the camera for 45 seconds.",
+                        "Do a quick cute dance or blow a kiss for him on camera.",
+                        "Send your current cute selfie in the chat right now.",
+                        "Write 'I Love You My Handsome' on a piece of paper and show it."
+                    ]
+                }
+            },
+            2: {
+                truth: {
+                    boy: [
+                        "Have you ever gotten turned on just by thinking about her during an LDR call?",
+                        "Which body part of hers do you find most attractive and hot?",
+                        "What is your secret fantasy about her that you haven't told yet?",
+                        "What action of hers instantly puts you in the mood?",
+                        "If she were right next to you on your bed right now, what would you do first?"
+                    ],
+                    girl: [
+                        "Have you ever gotten turned on just by thinking about him during an LDR call?",
+                        "Which body part of his do you find most attractive and hot?",
+                        "What is your secret fantasy about him that you haven't told yet?",
+                        "What action of his instantly puts you in the mood?",
+                        "If he were right next to you on your bed right now, what would you do first?"
+                    ]
+                },
+                dare: {
+                    boy: [
+                        "Unbutton your shirt or show your shoulders/chest tease on camera.",
+                        "Blow a lingering kiss to the camera and whisper something spicy.",
+                        "Gently kiss your shoulder while looking into the camera.",
+                        "Strike a hot muscular pose on your bed and send a quick photo.",
+                        "Show a tease of your waist or collarbone on camera for 5 seconds."
+                    ],
+                    girl: [
+                        "Tease your collarbone or lower your top shoulder slightly on camera.",
+                        "Blow a lingering kiss to the camera and whisper something spicy.",
+                        "Bite your lips gently while looking seductive into the camera.",
+                        "Strike a hot cute pose on your bed and send a quick photo.",
+                        "Show a tease of your waist or collarbone on camera for 5 seconds."
+                    ]
+                }
+            },
+            3: {
+                truth: {
+                    boy: [
+                        "Have you ever felt like getting intimate while on a video call with her?",
+                        "Describe in detail your ultimate 18+ sexual fantasy with her.",
+                        "Where is the wildest or most adventurous place you want to make out with her?",
+                        "Do you prefer passionate romantic sex or wild rough intimacy with her?",
+                        "Which specific spot on your body turns you on the most when she touches it?",
+                        "What is your favorite position that you desperately want to try with her when you meet?",
+                        "Have you ever taken a private adult photo/video meant only for her?",
+                        "What kind of outfit or lingerie do you want her to wear during your next private session?",
+                        "What is the dirtiest thought you had about her today before joining this call?",
+                        "How many times a week do you get turned on thinking about her intimate moments?",
+                        "Do you like light biting, scratching, or spanking during intimacy with her?",
+                        "What is one dirty word or line you want to whisper in her ear when you are in bed?",
+                        "Have you ever had an intense intimate dream about her? Describe it.",
+                        "What is your biggest turn-off during an intimate moment?",
+                        "If you two had a full 24 hours locked in a hotel room with no phone, what would you do first?"
+                    ],
+                    girl: [
+                        "Have you ever felt like getting intimate while on a video call with him?",
+                        "Describe in detail your ultimate 18+ sexual fantasy with him.",
+                        "Where is the wildest or most adventurous place you want to make out with him?",
+                        "Do you prefer passionate romantic sex or wild rough intimacy with him?",
+                        "Which specific spot on your body turns you on the most when he touches it?",
+                        "What is your favorite position that you desperately want to try with him when you meet?",
+                        "Have you ever taken a private adult photo/video meant only for him?",
+                        "What kind of outfit do you want him to wear during your next private session?",
+                        "What is the dirtiest thought you had about him today before joining this call?",
+                        "How many times a week do you get turned on thinking about his intimate moments?",
+                        "Do you like light biting, scratching, or spanking during intimacy with him?",
+                        "What is one dirty word or line you want him to whisper in your ear when you are in bed?",
+                        "Have you ever had an intense intimate dream about him? Describe it.",
+                        "What is your biggest turn-off during an intimate moment?",
+                        "If you two had a full 24 hours locked in a hotel room with no phone, what would you do first?"
+                    ]
+                },
+                dare: {
+                    boy: [
+                        "Record a 30-second dirty talk voice note in a deep, seductive voice and send it right now.",
+                        "Take a spicy teaser selfie (showing collarbone/chest/waist) and upload it as Photo Proof.",
+                        "Send an intense breathing voice note teasing your girl.",
+                        "Unbutton your shirt and tease your chest/collarbone for your partner.",
+                        "Bite your lower lip and send a spicy snapshot with a dominant look.",
+                        "Whisper 3 extremely explicit and dirty things into your mic that you want to do to her in person.",
+                        "Close your eyes and record a 45-second voice note describing how you will undress her when you meet.",
+                        "Slowly slide your hand under your shirt and send a 15-second seductive audio clip.",
+                        "Send a private spicy teaser photo directly into our chat right now.",
+                        "Tell her step-by-step in chat or voice note how you want our next video call session to end."
+                    ],
+                    girl: [
+                        "Record a 30-second dirty talk voice note in a sweet, sensual voice and send it right now.",
+                        "Take a spicy teaser selfie (showing collarbone/waist) and upload it as Photo Proof.",
+                        "Send a soft breathing or moaning voice note teasing your partner.",
+                        "Unzip or slide down your top shoulder and tease your collarbone for your partner.",
+                        "Bite your lower lip and send a spicy snapshot with the most seductive look.",
+                        "Whisper 3 extremely explicit and dirty things into your mic that you want him to do to you in person.",
+                        "Close your eyes and record a 45-second voice note describing how you want him to touch you when you meet.",
+                        "Trace your finger along your lips on photo while giving a seductive stare.",
+                        "Send a private spicy teaser photo directly into our chat right now.",
+                        "Tell him step-by-step in chat or voice note how you want our next video call session to end."
+                    ]
+                }
+            }
+        };
+
+        let myGender = 'boy';
+        let currentRoomCode = null;
+        let myRole = 'P1';
+        let currentTurn = 'P1';
+        let currentLevel = 3;
+        let isSpinning = false;
+        let myPoints = 100;
+
+        let usedTruths = { 1: [], 2: [], 3: [] };
+        let usedDares = { 1: [], 2: [], 3: [] };
+
+        let mediaRecorder = null;
+        let audioChunks = [];
+        let isRecording = false;
+        let pendingImageDataUrl = null;
+        let pendingModalImageDataUrl = null;
+
+        const screenAge = document.getElementById('screen-age');
+        const screenGender = document.getElementById('screen-gender');
+        const screenLobby = document.getElementById('screen-lobby');
+        const screenWaiting = document.getElementById('screen-waiting');
+        const screenGame = document.getElementById('screen-game');
+        const roomBadge = document.getElementById('room-badge');
+        const headerRoomCode = document.getElementById('header-room-code');
+        const waitingRoomCode = document.getElementById('waiting-room-code');
+
+        function confirmAge(is18Plus) {
+            if (is18Plus) {
+                screenAge.classList.add('hidden');
+                screenGender.classList.remove('hidden');
+            } else {
+                document.getElementById('age-error').innerText = 'Sorry! You must be 18+ to enter Desire Room.';
+            }
+        }
+
+        function selectGender(gender) {
+            myGender = gender;
+            screenGender.classList.add('hidden');
+            screenLobby.classList.remove('hidden');
+        }
+
+        function createRoom() {
+            currentRoomCode = Math.floor(100000 + Math.random() * 900000).toString();
+            myRole = 'P1';
+            headerRoomCode.innerText = currentRoomCode;
+            waitingRoomCode.innerText = currentRoomCode;
+
+            socket.emit('create-room', { roomId: currentRoomCode, gender: myGender });
+
+            screenLobby.classList.add('hidden');
+            screenWaiting.classList.remove('hidden');
+            roomBadge.classList.remove('hidden');
+            roomBadge.classList.add('flex');
+        }
+
+        function joinRoom() {
+            const codeInput = document.getElementById('input-room-code').value.trim().toUpperCase();
+            if (codeInput.length !== 6) {
+                document.getElementById('lobby-error').innerText = 'Please enter a valid 6-digit room code!';
+                return;
+            }
+            currentRoomCode = codeInput;
+            myRole = 'P2';
+            headerRoomCode.innerText = currentRoomCode;
+
+            socket.emit('join-room', { roomId: currentRoomCode, gender: myGender });
+        }
+
+        socket.on('room-created', ({ roomId }) => {
+            currentRoomCode = roomId;
+        });
+
+        socket.on('room-joined', ({ players, currentTurn: serverTurn }) => {
+            screenWaiting.classList.add('hidden');
+            screenLobby.classList.add('hidden');
+            screenGame.classList.remove('hidden');
+            roomBadge.classList.remove('hidden');
+            roomBadge.classList.add('flex');
+
+            currentTurn = serverTurn;
+            updateTurnUI();
+            drawCanvasWheel(0);
+            appendSystemMessage('Your partner has joined private room.');
+        });
+
+        socket.on('join-error', ({ title, message }) => {
+            showNeonAlert(title, message);
+        });
+
+        function copyRoomCode() {
+            if (!currentRoomCode) return;
+            const dummy = document.createElement('textarea');
+            document.body.appendChild(dummy);
+            dummy.value = currentRoomCode;
+            dummy.select();
+            document.execCommand('copy');
+            document.body.removeChild(dummy);
+            showNeonAlert('Code Copied! 📋', 'Secret Room Code copied to clipboard: ' + currentRoomCode);
+        }
+
+        function changeLevel(lvl) {
+            currentLevel = parseInt(lvl);
+            socket.emit('system-event', { roomId: currentRoomCode, text: `🔥 Intensity changed to Level ${currentLevel}` });
+            appendSystemMessage(`🔥 Intensity changed to Level ${currentLevel}`);
+        }
+
+        function updateTurnUI() {
+            const isMyTurn = (currentTurn === myRole);
+            const headline = document.getElementById('turn-headline');
+            const subtext = document.getElementById('turn-subtext');
+            const spinBtn = document.getElementById('spin-btn');
+            const avatar = document.getElementById('turn-avatar');
+
+            avatar.innerText = currentTurn;
+
+            if (isMyTurn) {
+                headline.innerText = "YOUR TURN!";
+                headline.className = "text-xs font-black text-pink-400 tracking-wide uppercase animate-pulse";
+                subtext.innerText = "Spin the wheel now";
+                spinBtn.disabled = false;
+                spinBtn.removeAttribute('disabled');
+                spinBtn.classList.remove('opacity-40', 'cursor-not-allowed');
+            } else {
+                headline.innerText = "PARTNER'S TURN";
+                headline.className = "text-xs font-bold text-amber-400 tracking-wide uppercase";
+                subtext.innerText = "Waiting for partner to spin...";
+                spinBtn.disabled = true;
+                spinBtn.setAttribute('disabled', 'true');
+                spinBtn.classList.add('opacity-40', 'cursor-not-allowed');
+            }
+        }
+
+        const canvas = document.getElementById('wheel-canvas');
+        const ctx = canvas.getContext('2d');
+        const segments = [
+            { label: 'TRUTH', color: '#FF007F' },
+            { label: 'DARE', color: '#9333EA' },
+            { label: 'TRUTH', color: '#FF1E43' },
+            { label: 'DARE', color: '#A855F7' },
+            { label: 'TRUTH', color: '#06B6D4' },
+            { label: 'DARE', color: '#EC4899' }
+        ];
+
+        function drawCanvasWheel(rotationAngle) {
+            const numSegments = segments.length;
+            const arc = (2 * Math.PI) / numSegments;
+            const radius = canvas.width / 2;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            for (let i = 0; i < numSegments; i++) {
+                const angle = rotationAngle + i * arc;
+                ctx.beginPath();
+                ctx.fillStyle = segments[i].color;
+                ctx.moveTo(radius, radius);
+                ctx.arc(radius, radius, radius - 4, angle, angle + arc);
+                ctx.lineTo(radius, radius);
+                ctx.fill();
+
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = '#05010B';
+                ctx.stroke();
+
+                ctx.save();
+                ctx.translate(radius, radius);
+                ctx.rotate(angle + arc / 2);
+                ctx.textAlign = "right";
+                ctx.fillStyle = "#FFFFFF";
+                ctx.font = "black 13px Outfit, sans-serif";
+                ctx.fillText(segments[i].label, radius - 20, 5);
+                ctx.restore();
+            }
+        }
+
+        let currentRotation = 0;
+        function spinWheel() {
+            if (isSpinning || currentTurn !== myRole) return;
+            isSpinning = true;
+
+            const spinBtn = document.getElementById('spin-btn');
+            spinBtn.disabled = true;
+
+            const extraRotations = (Math.floor(Math.random() * 5) + 5) * 2 * Math.PI;
+            const randomOffset = Math.random() * 2 * Math.PI;
+            const targetRotation = currentRotation + extraRotations + randomOffset;
+            const startTime = performance.now();
+            const duration = 3500;
+
+            function animate(now) {
+                const elapsed = now - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const easeOut = 1 - Math.pow(1 - progress, 3);
+                const angle = currentRotation + (targetRotation - currentRotation) * easeOut;
+
+                drawCanvasWheel(angle);
+
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                } else {
+                    currentRotation = angle % (2 * Math.PI);
+                    isSpinning = false;
+                    evaluateSpinResult();
+                }
+            }
+            requestAnimationFrame(animate);
+        }
+
+        function evaluateSpinResult() {
+            isSpinning = false;
+            const type = Math.random() > 0.5 ? 'truth' : 'dare';
+            let levelList = QUESTION_BANK[currentLevel][type][myGender];
+            const usedList = type === 'truth' ? usedTruths[currentLevel] : usedDares[currentLevel];
+
+            let availableIndexes = [];
+            for (let i = 0; i < levelList.length; i++) {
+                if (!usedList.includes(i)) availableIndexes.push(i);
+            }
+
+            if (availableIndexes.length === 0) {
+                if (type === 'truth') usedTruths[currentLevel] = [];
+                else usedDares[currentLevel] = [];
+                for (let i = 0; i < levelList.length; i++) availableIndexes.push(i);
+            }
+
+            const chosenIdx = availableIndexes[Math.floor(Math.random() * availableIndexes.length)];
+            if (type === 'truth') usedTruths[currentLevel].push(chosenIdx);
+            else usedDares[currentLevel].push(chosenIdx);
+
+            const promptText = levelList[chosenIdx];
+
+            socket.emit('spin-wheel', { roomId: currentRoomCode, type, promptText, spinnerRole: myRole });
+        }
+
+        socket.on('wheel-spun', ({ spinnerId, spinnerRole, type, promptText }) => {
+            const isMe = (spinnerRole === myRole);
+            showPromptModal(type, promptText, spinnerRole, isMe);
+        });
+
+        function showPromptModal(type, text, spinnerRole, isMe) {
+            const modal = document.getElementById('prompt-modal');
+            const badge = document.getElementById('prompt-badge');
+            const content = document.getElementById('prompt-content');
+
+            badge.innerText = type.toUpperCase();
+            badge.className = (type === 'truth')
+                ? "inline-block px-4 py-1.5 rounded-full text-xs font-black tracking-widest uppercase bg-cyan-500 text-white shadow-glowCyan"
+                : "inline-block px-4 py-1.5 rounded-full text-xs font-black tracking-widest uppercase bg-pink-600 text-white shadow-glowHotPink";
+
+            content.innerText = text;
+
+            const actionsContainer = document.getElementById('prompt-actions-container');
+
+            if (isMe) {
+                actionsContainer.innerHTML = `
+                    <span class="text-[10px] uppercase font-extrabold text-pink-300 tracking-widest">Perform & Submit Proof</span>
+                    <button onclick="openChatModalFromPrompt()" class="w-full py-3.5 rounded-2xl bg-purple-900/80 hover:bg-purple-800 border border-pink-500/50 text-white font-black text-xs tracking-wider shadow-glowPurple transition transform active:scale-95 flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-camera-retro text-base text-pink-400"></i>
+                        <span>SEND PROOF (PHOTO / VOICE / CHAT)</span>
+                    </button>
+                    <button onclick="completePromptTask()" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black text-xs tracking-wider shadow-lg transition transform active:scale-95 flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-circle-check text-base"></i>
+                        <span>SUBMIT TASK FOR PARTNER REVIEW</span>
+                    </button>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="skipPromptTask()" class="py-2.5 rounded-xl bg-purple-950/80 hover:bg-purple-900 border border-purple-500/40 text-purple-300 text-xs font-bold transition">Skip Prompt (-10 Pts)</button>
+                        <button onclick="requestPenalty()" class="py-2.5 rounded-xl bg-rose-950/90 hover:bg-rose-900 border border-rose-500/50 text-rose-300 text-xs font-bold transition shadow-glowRed">Take Penalty 😈 (-10 Pts)</button>
+                    </div>
+                `;
+            } else {
+                actionsContainer.innerHTML = `
+                    <span class="text-[10px] uppercase font-extrabold text-pink-300 tracking-widest">Partner Got This Prompt!</span>
+                    <button onclick="openChatModalFromPrompt()" class="w-full py-3.5 rounded-2xl bg-gradient-to-r from-pink-600 to-purple-600 hover:from-pink-500 hover:to-purple-500 text-white font-black text-xs tracking-wider shadow-glowHotPink transition transform active:scale-95 flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-comments text-base"></i>
+                        <span>CHAT & MOTIVATE PARTNER 🔥</span>
+                    </button>
+                    <p class="text-[10px] text-gray-400 text-center italic">Waiting for ${spinnerRole} to perform or respond...</p>
+                `;
+            }
+
+            modal.classList.remove('hidden');
+            appendSystemMessage(`🎲 ${spinnerRole} drew a ${type.toUpperCase()}: "${text}"`);
+        }
+
+        function closePromptModalSelf() {
+            document.getElementById('prompt-modal').classList.add('hidden');
+        }
+
+        socket.on('auto-close-prompt-modal', () => {
+            document.getElementById('prompt-modal').classList.add('hidden');
+        });
+
+        function openChatModalFromPrompt() {
+            document.getElementById('modal-chat-overlay').classList.remove('hidden');
+            document.getElementById('modal-chat-input').focus();
+        }
+
+        function closeChatModalOverlay() {
+            document.getElementById('modal-chat-overlay').classList.add('hidden');
+        }
+
+        function sendModalChatMessage() {
+            const input = document.getElementById('modal-chat-input');
+            const text = input.value.trim();
+
+            if (!text && !pendingModalImageDataUrl) return;
+
+            const msgData = { sender: myRole };
+            if (text) msgData.text = text;
+            if (pendingModalImageDataUrl) {
+                msgData.imageUrl = pendingModalImageDataUrl;
+                cancelModalImagePreview();
+            }
+
+            renderChatMessage(msgData);
+            socket.emit('send-message', { roomId: currentRoomCode, msgData });
+            input.value = '';
+        }
+
+        function completePromptTask() {
+            document.getElementById('modal-chat-overlay').classList.add('hidden');
+            socket.emit('submit-task-for-review', { roomId: currentRoomCode, spinnerRole: myRole });
+        }
+
+        socket.on('partner-task-review', ({ spinnerRole }) => {
+            document.getElementById('prompt-modal').classList.add('hidden');
+            const isMe = (spinnerRole === myRole);
+
+            if (!isMe) {
+                renderReviewActionCard(spinnerRole);
+            } else {
+                appendSystemMessage(`⌛ Submitted for ${spinnerRole === 'P1' ? 'P2' : 'P1'}'s approval...`);
+            }
+        });
+
+        function renderReviewActionCard(spinnerRole) {
+            const feed = document.getElementById('chat-feed');
+            const div = document.createElement('div');
+            div.className = 'my-3 p-3 rounded-2xl glass-panel-spicy neon-border-hotpink text-center space-y-2';
+            div.id = 'active-review-card';
+            div.innerHTML = `
+                <p class="text-xs font-bold text-pink-300">🔥 Partner completed task! How was performance?</p>
+                <div class="flex space-x-2 pt-1">
+                    <button onclick="resolveReview(true)" class="flex-1 py-2 bg-emerald-600 hover:bg-emerald-500 font-bold text-xs rounded-xl text-white shadow-glowHotPink">
+                        🔥 Approved & Hot!
+                    </button>
+                    <button onclick="resolveReview(false)" class="flex-1 py-2 bg-rose-600 hover:bg-rose-500 font-bold text-xs rounded-xl text-white shadow-glowRed">
+                        🌶️ Not Spicy (-10 Pts)
+                    </button>
+                </div>
+            `;
+            feed.appendChild(div);
+            feed.scrollTop = feed.scrollHeight;
+        }
+
+        function resolveReview(approved) {
+            const card = document.getElementById('active-review-card');
+            if (card) card.remove();
+
+            socket.emit('resolve-task-review', {
+                roomId: currentRoomCode,
+                approved,
+                reviewerRole: myRole
+            });
+        }
+
+        socket.on('task-review-resolved', ({ approved, reviewerRole, nextTurn }) => {
+            if (approved) {
+                appendSystemMessage(`🎉 ${reviewerRole} APPROVED the performance! Excellent chemistry 🔥`);
+            } else {
+                if (currentTurn === myRole) {
+                    myPoints -= 10;
+                    document.getElementById('my-points-display').innerText = myPoints;
+                }
+                appendSystemMessage(`🌶️ Partner felt it wasn't spicy enough! (-10 Points Penalty Applied)`);
+            }
+
+            currentTurn = nextTurn;
+            updateTurnUI();
+        });
+
+        function skipPromptTask() {
+            document.getElementById('modal-chat-overlay').classList.add('hidden');
+            socket.emit('close-prompt-modal', { roomId: currentRoomCode });
+            
+            myPoints -= 10;
+            document.getElementById('my-points-display').innerText = myPoints;
+
+            const sysText = `🙈 ${myRole} skipped their prompt! (-10 Points Penalty) | Current Points: ${myPoints}`;
+            appendSystemMessage(sysText);
+            socket.emit('system-event', { roomId: currentRoomCode, text: sysText });
+            passTurn();
+        }
+
+        function requestPenalty() {
+            document.getElementById('modal-chat-overlay').classList.add('hidden');
+            socket.emit('close-prompt-modal', { roomId: currentRoomCode });
+
+            myPoints -= 10;
+            document.getElementById('my-points-display').innerText = myPoints;
+
+            const sysText = `😈 ${myRole} took a penalty task! (-10 Points) | Current Points: ${myPoints}`;
+            appendSystemMessage(sysText);
+            socket.emit('system-event', { roomId: currentRoomCode, text: sysText });
+            passTurn();
+        }
+
+        function passTurn() {
+            const nextTurn = (currentTurn === 'P1') ? 'P2' : 'P1';
+            currentTurn = nextTurn;
+            updateTurnUI();
+            socket.emit('pass-turn', { roomId: currentRoomCode, nextTurn });
+        }
+
+        socket.on('turn-changed', ({ currentTurn: newTurn }) => {
+            currentTurn = newTurn;
+            updateTurnUI();
+        });
+
+        async function toggleVoiceRecording(isOverlayModal = false) {
+            const micBtn = isOverlayModal ? document.getElementById('modal-mic-btn') : document.getElementById('mic-btn');
+            const micIcon = isOverlayModal ? document.getElementById('modal-mic-icon') : document.getElementById('mic-icon');
+
+            if (!isRecording) {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    mediaRecorder = new MediaRecorder(stream);
+                    audioChunks = [];
+
+                    mediaRecorder.ondataavailable = (event) => {
+                        if (event.data.size > 0) audioChunks.push(event.data);
+                    };
+
+                    mediaRecorder.onstop = () => {
+                        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                        const reader = new FileReader();
+                        reader.readAsDataURL(audioBlob);
+                        reader.onloadend = () => {
+                            sendVoiceNoteMessage(reader.result);
+                        };
+                        stream.getTracks().forEach(track => track.stop());
+                    };
+
+                    mediaRecorder.start();
+                    isRecording = true;
+                    micBtn.classList.add('pulse-hot', 'bg-rose-600', 'text-white');
+                    micIcon.className = "fa-solid fa-stop";
+                } catch (err) {
+                    showNeonAlert('Microphone Error 🎙️', 'Microphone access denied or unsupported in browser.');
+                }
+            } else {
+                if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
+                isRecording = false;
+                micBtn.classList.remove('pulse-hot', 'bg-rose-600', 'text-white');
+                micIcon.className = "fa-solid fa-microphone";
+            }
+        }
+
+        function handleImageSelect(event, isOverlayModal = false) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            if (file.size > 5 * 1024 * 1024) {
+                showNeonAlert('File Too Large ⚠️', 'Please select an image smaller than 5MB.');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                if (isOverlayModal) {
+                    pendingModalImageDataUrl = e.target.result;
+                    document.getElementById('modal-image-preview-element').src = pendingModalImageDataUrl;
+                    document.getElementById('modal-image-preview-container').classList.remove('hidden');
+                } else {
+                    pendingImageDataUrl = e.target.result;
+                    document.getElementById('image-preview-element').src = pendingImageDataUrl;
+                    document.getElementById('image-preview-container').classList.remove('hidden');
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function cancelImagePreview() {
+            pendingImageDataUrl = null;
+            document.getElementById('image-preview-element').src = '';
+            document.getElementById('image-preview-container').classList.add('hidden');
+            document.getElementById('image-input').value = '';
+        }
+
+        function cancelModalImagePreview() {
+            pendingModalImageDataUrl = null;
+            document.getElementById('modal-image-preview-element').src = '';
+            document.getElementById('modal-image-preview-container').classList.add('hidden');
+            document.getElementById('modal-image-input').value = '';
+        }
+
+        function sendQuickEmoji(emoji) {
+            const msgData = { sender: myRole, emoji };
+            renderChatMessage(msgData);
+            socket.emit('send-message', { roomId: currentRoomCode, msgData });
+        }
+
+        function sendVoiceNoteMessage(audioBase64) {
+            const msgData = { sender: myRole, audioUrl: audioBase64 };
+            renderChatMessage(msgData);
+            socket.emit('send-message', { roomId: currentRoomCode, msgData });
+        }
+
+        function sendChatMessage() {
+            const input = document.getElementById('chat-text-input');
+            const text = input.value.trim();
+
+            if (!text && !pendingImageDataUrl) return;
+
+            const msgData = { sender: myRole };
+            if (text) msgData.text = text;
+            if (pendingImageDataUrl) {
+                msgData.imageUrl = pendingImageDataUrl;
+                cancelImagePreview();
+            }
+
+            renderChatMessage(msgData);
+            socket.emit('send-message', { roomId: currentRoomCode, msgData });
+            input.value = '';
+        }
+
+        socket.on('receive-message', (msgData) => {
+            renderChatMessage(msgData);
+        });
+
+        socket.on('receive-system-event', ({ text }) => {
+            appendSystemMessage(text);
+        });
+
+        socket.on('partner-left', () => {
+            appendSystemMessage('⚠️ Partner disconnected from the room.');
+        });
+
+        function renderChatMessage(msg) {
+            const feed = document.getElementById('chat-feed');
+            const modalFeed = document.getElementById('modal-chat-feed');
+            const isMe = msg.sender === myRole;
+
+            const msgRow = document.createElement('div');
+            msgRow.className = `flex flex-col ${isMe ? 'items-end' : 'items-start'} space-y-1 my-1`;
+
+            const bubble = document.createElement('div');
+            bubble.className = `max-w-[80%] rounded-2xl px-3 py-2 shadow-md ${isMe
+                ? 'bg-gradient-to-r from-pink-600 to-purple-600 text-white rounded-br-none shadow-glowHotPink'
+                : 'bg-purple-900/90 border border-purple-500/40 text-purple-100 rounded-bl-none shadow-glowPurple'
+                }`;
+
+            if (msg.text) {
+                const textP = document.createElement('p');
+                textP.className = 'text-xs break-words';
+                textP.innerText = msg.text;
+                bubble.appendChild(textP);
+            }
+
+            if (msg.emoji) {
+                const emojiSpan = document.createElement('span');
+                emojiSpan.className = 'text-2xl';
+                emojiSpan.innerText = msg.emoji;
+                bubble.appendChild(emojiSpan);
+            }
+
+            if (msg.imageUrl) {
+                const img = document.createElement('img');
+                img.src = msg.imageUrl;
+                img.className = 'w-48 h-36 object-cover rounded-xl mt-1 border border-pink-400/50 cursor-pointer hover:opacity-90 transition';
+                img.onclick = () => openImageModal(msg.imageUrl);
+                bubble.appendChild(img);
+            }
+
+            if (msg.audioUrl) {
+                const audioContainer = document.createElement('div');
+                audioContainer.className = 'flex items-center space-x-2 py-1';
+
+                const audio = document.createElement('audio');
+                audio.controls = true;
+                audio.src = msg.audioUrl;
+                audio.className = 'h-8 max-w-[200px] rounded-lg';
+
+                audioContainer.appendChild(audio);
+                bubble.appendChild(audioContainer);
+            }
+
+            msgRow.appendChild(bubble);
+
+            if (feed) {
+                feed.appendChild(msgRow.cloneNode(true));
+                feed.scrollTop = feed.scrollHeight;
+            }
+
+            if (modalFeed) {
+                modalFeed.appendChild(msgRow);
+                modalFeed.scrollTop = modalFeed.scrollHeight;
+            }
+        }
+
+        function appendSystemMessage(text) {
+            const feed = document.getElementById('chat-feed');
+            const div = document.createElement('div');
+            div.className = 'text-center my-1.5';
+            div.innerHTML = `<span class="text-[10px] bg-purple-950/90 text-pink-300 px-3 py-1 rounded-full border border-pink-500/30 font-semibold">${text}</span>`;
+            feed.appendChild(div);
+            feed.scrollTop = feed.scrollHeight;
+        }
+
+        function openImageModal(url) {
+            document.getElementById('modal-image-display').src = url;
+            document.getElementById('image-modal').classList.remove('hidden');
+        }
+
+        function closeImageModal() {
+            document.getElementById('image-modal').classList.add('hidden');
+        }
+
+        function openRulesModal() {
+            document.getElementById('rules-modal').classList.remove('hidden');
+        }
+
+        function closeRulesModal() {
+            document.getElementById('rules-modal').classList.add('hidden');
+        }
+
+        function showNeonAlert(title, message) {
+            document.getElementById('alert-title').innerText = title;
+            document.getElementById('alert-message').innerText = message;
+            document.getElementById('alert-modal').classList.remove('hidden');
+        }
+
+        function closeAlertModal() {
+            document.getElementById('alert-modal').classList.add('hidden');
+        }
+
+        window.onload = function () {
+            drawCanvasWheel(0);
+        };
+    </script>
+</body>
+
+</html>

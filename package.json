@@ -1,0 +1,13 @@
+{
+  "name": "desire-room-ldr",
+  "version": "1.0.0",
+  "description": "18+ LDR Couples Truth or Dare Real-time Game",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.22.3",
+    "socket.io": "^4.8.4"
+  }
+}

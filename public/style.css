@@ -1,0 +1,39 @@
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+body { background: #0f051d; color: #fff; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 15px; }
+.app-container { width: 100%; max-width: 450px; text-align: center; }
+header h1 { color: #ff2a75; text-shadow: 0 0 10px #ff2a75; font-size: 2rem; }
+header p { color: #aaa; margin-bottom: 20px; font-size: 0.9rem; }
+
+.card { background: #1a0b2e; border: 1px solid #ff2a7555; padding: 20px; border-radius: 16px; box-shadow: 0 8px 32px rgba(0,0,0,0.5); }
+.hidden { display: none !important; }
+
+.btn { width: 100%; padding: 12px; margin: 8px 0; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+.btn.primary { background: #ff2a75; color: #fff; }
+.btn.secondary { background: #8a2be2; color: #fff; }
+.btn.success { background: #00e676; color: #000; }
+.btn.spin-btn { background: linear-gradient(45deg, #ff2a75, #8a2be2); font-size: 1.1rem; box-shadow: 0 0 15px #ff2a75; }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.divider { margin: 10px 0; color: #666; font-size: 0.8rem; }
+.join-box { display: flex; gap: 8px; }
+.join-box input { flex: 1; padding: 10px; border-radius: 8px; border: 1px solid #444; background: #0b0314; color: #fff; text-align: center; }
+
+.pulse-text { color: #ff2a75; animation: pulse 1.5s infinite; font-size: 1.1rem; margin-top: 10px; }
+@keyframes pulse { 0%{opacity: 0.3;} 50%{opacity: 1;} 100%{opacity: 0.3;} }
+
+.turn-bar { background: #2a1245; padding: 8px; border-radius: 8px; font-weight: bold; color: #00e676; margin-bottom: 15px; }
+.level-selector { margin-bottom: 15px; text-align: left; }
+.level-selector select { width: 100%; padding: 8px; background: #0b0314; color: #fff; border: 1px solid #ff2a75; border-radius: 6px; margin-top: 5px; }
+
+.wheel-disc { width: 120px; height: 120px; border-radius: 50%; border: 4px solid #ff2a75; display: flex; align-items: center; justify-content: center; font-size: 3rem; margin: 15px auto; background: #2a0845; }
+.spinning { animation: spinAnim 1s infinite linear; }
+@keyframes spinAnim { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+.prompt-card { background: #2a0845; border: 2px solid #ff2a75; border-radius: 12px; padding: 15px; margin-top: 15px; }
+.tag { background: #ff2a75; padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; }
+
+.chat-section { margin-top: 20px; border-top: 1px solid #333; padding-top: 10px; text-align: left; }
+.chat-box { height: 100px; overflow-y: auto; background: #0b0314; border-radius: 8px; padding: 8px; font-size: 0.85rem; margin: 8px 0; }
+.chat-input-box { display: flex; gap: 5px; }
+.chat-input-box input { flex: 1; padding: 8px; background: #1a0b2e; border: 1px solid #444; border-radius: 6px; color: #fff; }
+.error { color: #ff5252; font-size: 0.85rem; margin-top: 5px; }
